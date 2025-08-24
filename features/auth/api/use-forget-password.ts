@@ -9,9 +9,7 @@ export function useForgetPassword() {
     { email?: string; phone?: string }
   >({
     mutationFn: async (data) => {
-      // فقط لاگ گرفتن دیتا
       console.log("ForgetPassword Data:", data);
-      // ماک: هیچ درخواست واقعی ارسال نمی‌شود
       return { message: "Password reset code sent (mock)" };
     },
     onSuccess: () => {

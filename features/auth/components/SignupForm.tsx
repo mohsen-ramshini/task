@@ -2,14 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import "flag-icons/css/flag-icons.min.css";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../../src/components/ui/form";
 import { Button } from "../../../src/components/ui/button";
 import {
   Select,
@@ -20,7 +12,9 @@ import {
 } from "../../../src/components/ui/select";
 import { countries } from "../../../lib/constants";
 import { useSignup } from "../api/use-sign-up";
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema } from "../types/schema";
+import type { SignupFormValues } from "../types/auth";
 
 type Country = typeof countries[number];
 
@@ -46,25 +40,35 @@ const SignupForm = () => {
   const [marketingChecked, setMarketingChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+    },
+  });
   const signupMutation = useSignup();
 
-  const onSubmit = async (values: any) => {
+
+  const onSubmit = async (values: SignupFormValues) => {
     setIsLoading(true);
     const data = {
       ...values,
       phone: selectedCountry.code + " " + (values.phone || ""),
     };
-    // مکث ۲ ثانیه‌ای قبل از ارسال
     await new Promise((res) => setTimeout(res, 2000));
-    signupMutation.mutate(data, {
+    signupMutation.mutate(data as any, {
       onSettled: () => setIsLoading(false),
       onSuccess: async () => {
-        await new Promise((res) => setTimeout(res, 1200));
-        window.location.href = '/auth/sign-in';
+      await new Promise((res) => setTimeout(res, 1200));
+      reset();
+      window.location.href = '/auth/sign-in';
       },
       onError: async () => {
-        await new Promise((res) => setTimeout(res, 1200));
+      await new Promise((res) => setTimeout(res, 1200));
       }
     });
   };
@@ -75,35 +79,41 @@ const SignupForm = () => {
         <h1 className="text-3xl font-bold text-primary dark:text-white">
           Sign Up
         </h1>
-        <p>Welcome to the Fortuna Markets</p>
+        <p className="pt-2">Welcome to the Fortuna Markets</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="flex gap-3">
           <div className="w-1/2">
             <label className="text-gray-600 block mb-1">First Name</label>
             <CustomInput
-              {...register("firstName", { required: true })}
+              {...register("firstName")}
               placeholder="Enter your first name"
             />
-            {errors.firstName && <span className="text-xs text-red-500">Required</span>}
+            {errors.firstName && (
+              <span className="text-xs text-red-500">{errors.firstName.message as string}</span>
+            )}
           </div>
           <div className="w-1/2">
             <label className="text-gray-600 block mb-1">Last Name</label>
             <CustomInput
-              {...register("lastName", { required: true })}
+              {...register("lastName")}
               placeholder="Enter your last name"
             />
-            {errors.lastName && <span className="text-xs text-red-500">Required</span>}
+            {errors.lastName && (
+              <span className="text-xs text-red-500">{errors.lastName.message as string}</span>
+            )}
           </div>
         </div>
         <div>
           <label className="text-gray-600 block mb-1">Email</label>
           <CustomInput
             type="email"
-            {...register("email", { required: true })}
+            {...register("email")}
             placeholder="Enter your email"
           />
-          {errors.email && <span className="text-xs text-red-500">Required</span>}
+          {errors.email && (
+            <span className="text-xs text-red-500">{errors.email.message as string}</span>
+          )}
         </div>
         <div>
           <label className="text-gray-600 block mb-1">Phone number</label>
@@ -136,19 +146,21 @@ const SignupForm = () => {
               dir="ltr"
               type="tel"
               placeholder="Enter your mobile number"
-              {...register("phone", { required: true })}
+              {...register("phone")}
               className="rounded-l-none w-full"
               style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
             />
           </div>
-          {errors.phone && <span className="text-xs text-red-500">Required</span>}
+          {errors.phone && (
+            <span className="text-xs text-red-500">{errors.phone.message as string}</span>
+          )}
         </div>
         <div>
           <label className="text-gray-600 block mb-1">Password</label>
           <div className="relative">
             <CustomInput
               type={showPassword ? "text" : "password"}
-              {...register("password", { required: true })}
+              {...register("password")}
               placeholder="Enter your password"
             />
             <button
@@ -160,7 +172,9 @@ const SignupForm = () => {
               {!showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
           </div>
-          {errors.password && <span className="text-xs text-red-500">Required</span>}
+          {errors.password && (
+            <span className="text-xs text-red-500">{errors.password.message as string}</span>
+          )}
         </div>
         <div className="space-y-2 mt-4">
           <label className="flex items-center gap-2 text-sm">
@@ -210,6 +224,9 @@ const SignupForm = () => {
           >
             Sign in
           </a>
+        </div>
+        <div className="mt-6 text-xs text-gray-600 text-center leading-relaxed">
+          * Restricted Regions: Fortuna Markets Limited does not provide services for the residents of certain countries, such as the USA, UAE, Turkey, Israel, North Korea.
         </div>
       </form>
     </div>

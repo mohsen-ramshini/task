@@ -92,7 +92,6 @@ export const SigninForm = () => {
         </p>
       </div>
 
-      {/* Tab selection for login method with underline */}
       <div className="flex mb-6 relative border-b border-gray-200 dark:border-zinc-700">
         <button
           type="button"
@@ -126,7 +125,6 @@ export const SigninForm = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
-          {/* Email or Mobile field based on tab selection */}
           {tab === "email" ? (
             <FormField
               control={form.control}
@@ -155,7 +153,6 @@ export const SigninForm = () => {
                   <FormLabel className="text-gray-600">Phone number</FormLabel>
                   <FormControl>
                     <div className="flex">
-                      {/* shadcn Select for country */}
                       <div className="flex items-center">
                         <Select
                           value={selectedCountry.code}
@@ -180,7 +177,6 @@ export const SigninForm = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      {/* Phone Input (custom input) */}
                       <CustomInput
                         dir="ltr"
                         type="tel"
@@ -188,7 +184,6 @@ export const SigninForm = () => {
                         {...field}
                         value={field.value.replace(/^\+\d+\s?/, "")}
                         onChange={e => {
-                          // Always keep the value as country code + phone
                           field.onChange(`${selectedCountry.code} ${e.target.value.replace(/\D/g, "")}`);
                         }}
                         className="rounded-l-none w-full"

@@ -12,7 +12,6 @@ import {
 import { Button } from "../../../src/components/ui/button";
 import { countries } from "../../../lib/constants";
 import { useForgetPassword } from "../api/use-forget-password";
-import { toast } from "sonner";
 
 type Country = typeof countries[number];
 
@@ -66,10 +65,9 @@ const ForgetPassword = () => {
           Forgot Password
         </h1>
         <p className="text-sm text-gray-900 font-semibold dark:text-gray-400 mt-2">
-          Chose the reset password method and get the code
+          Choose the reset password method and get the code
         </p>
       </div>
-      {/* Tab selection for method */}
       <div className="flex mb-6 relative border-b border-gray-200 dark:border-zinc-700">
         <button
           type="button"

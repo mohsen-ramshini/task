@@ -1,6 +1,5 @@
 import React from 'react'
 import type { PropsWithChildren } from 'react'
-// حذف Card و CardContent و استفاده از یک div ساده بدون border
 import { Avatar, AvatarImage } from "../../../src/components/ui/avatar"
 
 const Auth: React.FC<PropsWithChildren> = ({ children }) => {
