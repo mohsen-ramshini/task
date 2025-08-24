@@ -4,7 +4,7 @@ import { Avatar, AvatarImage } from "../../../src/components/ui/avatar"
 
 const Auth: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="w-full h-full flex flex-col lg:flex-row justify-center items-center relative bg-white dark:bg-zinc-900 rounded-2xl">
+    <div className="w-full min-h-screen flex flex-col lg:flex-row justify-center items-center relative bg-white dark:bg-zinc-900 overflow-y-auto">
       <div className="flex lg:hidden absolute top-4 right-4 z-10 p-0">
         <div className="w-24 h-12 flex justify-center items-center rounded-lg  bg-white dark:bg-zinc-900">
           <div className="flex justify-center items-center p-0 w-full h-full">
@@ -23,7 +23,7 @@ const Auth: React.FC<PropsWithChildren> = ({ children }) => {
       <div className="w-full lg:w-1/2 h-full flex items-center justify-center p-0">
         {children}
       </div>
-      <div className="hidden z-10 lg:flex w-1/2 h-screen justify-center items-center p-0 relative overflow-hidden rounded-2xl">
+      <div className="hidden z-10 lg:flex w-1/2 h-screen justify-center items-center p-0 relative overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover bg-video"
           autoPlay
