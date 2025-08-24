@@ -31,7 +31,7 @@ const CustomInput = React.forwardRef<
   <input
     ref={ref}
     className={
-      `w-full px-3 py-2 rounded-md bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-transparent transition-all duration-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none ` +
+      `w-full px-3 py-2 rounded-xl bg-[#f5f5f5] dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-transparent transition-all duration-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none ` +
       className
     }
     {...props}
@@ -157,7 +157,7 @@ const SignupForm = () => {
               className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-600 dark:text-gray-400"
               tabIndex={-1}
             >
-              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              {!showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
             </button>
           </div>
           {errors.password && <span className="text-xs text-red-500">Required</span>}
