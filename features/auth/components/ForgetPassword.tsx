@@ -1,9 +1,204 @@
-import React from 'react'
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
+import "flag-icons/css/flag-icons.min.css";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../../src/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../src/components/ui/select";
+import { Button } from "../../../src/components/ui/button";
+
+// Country selector data
+const countries = [
+  { code: "+1", name: "United States", flag: "us" },
+  { code: "+44", name: "United Kingdom", flag: "gb" },
+  { code: "+98", name: "Iran", flag: "ir" },
+  { code: "+91", name: "India", flag: "in" },
+  { code: "+81", name: "Japan", flag: "jp" },
+  { code: "+49", name: "Germany", flag: "de" },
+  { code: "+33", name: "France", flag: "fr" },
+  { code: "+61", name: "Australia", flag: "au" },
+  { code: "+7", name: "Russia", flag: "ru" },
+  { code: "+86", name: "China", flag: "cn" },
+  { code: "+39", name: "Italy", flag: "it" },
+  { code: "+34", name: "Spain", flag: "es" },
+  { code: "+90", name: "Turkey", flag: "tr" },
+  { code: "+966", name: "Saudi Arabia", flag: "sa" },
+  { code: "+971", name: "UAE", flag: "ae" },
+  // ... add more as needed
+];
+
+type Country = typeof countries[number];
+
+const CustomInput = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className = "", ...props }, ref) => (
+  <input
+    ref={ref}
+    className={
+      `w-full px-3 py-2 rounded-md bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-transparent transition-all duration-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none ` +
+      className
+    }
+    {...props}
+  />
+));
 
 const ForgetPassword = () => {
-  return (
-    <div>ForgetPassword</div>
-  )
-}
+  const [tab, setTab] = useState<"email" | "mobile">("email");
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-export default ForgetPassword
+  const onSubmit = (values: any) => {
+    // Handle forget password
+  };
+
+  return (
+    <div className="w-5/6 h-full max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl p-6 md:p-8 mt-12 text-left direction-ltr">
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold text-primary dark:text-white">
+          Forgot Password
+        </h1>
+        <p className="text-sm text-gray-900 font-semibold dark:text-gray-400 mt-2">
+          Chose the reset password method and get the code
+        </p>
+      </div>
+      {/* Tab selection for method */}
+      <div className="flex mb-6 relative border-b border-gray-200 dark:border-zinc-700">
+        <button
+          type="button"
+          className={`flex-1 py-2 text-center relative bg-transparent focus:outline-none ${
+            tab === "email"
+              ? "text-blue-600"
+              : "text-gray-700 dark:text-gray-300"
+          }`}
+          onClick={() => setTab("email")}
+        >
+          Email
+        </button>
+        <button
+          type="button"
+          className={`flex-1 py-2 text-center relative bg-transparent focus:outline-none ${
+            tab === "mobile"
+              ? "text-blue-600"
+              : "text-gray-700 dark:text-gray-300"
+          }`}
+          onClick={() => setTab("mobile")}
+        >
+          Phone
+        </button>
+        <motion.div
+          layout
+          layoutId="tab-underline"
+          className={`absolute bottom-0 h-[3px] bg-blue-600 rounded-t transition-all`}
+          style={{
+            left: tab === "email" ? "0%" : "50%",
+            width: "50%",
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 30,
+            duration: 2.5,
+          }}
+        />
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {tab === "email" ? (
+          <div>
+            <label className="text-gray-600 block mb-1">Email</label>
+            <CustomInput
+              type="email"
+              {...register("email", { required: true })}
+              placeholder="Enter your email"
+            />
+            {errors.email && (
+              <span className="text-xs text-red-500">Required</span>
+            )}
+          </div>
+        ) : (
+          <div>
+            <label className="text-gray-600 block mb-1">Phone number</label>
+            <div className="flex">
+              <div className="flex items-center">
+                <Select
+                  value={selectedCountry.code}
+                  onValueChange={(val) => {
+                    const country = countries.find((c) => c.code === val);
+                    if (country) setSelectedCountry(country);
+                  }}
+                >
+                  <SelectTrigger className="rounded-l-md w-32 min-w-fit px-2 py-2 bg-white dark:bg-zinc-900 border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 outline-none text-sm">
+                    <span
+                      className={`fi fi-${selectedCountry.flag} rounded-full w-5 h-5 mr-2`}
+                    />
+                    <SelectValue>
+                      {selectedCountry.code}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent side="bottom">
+                    {countries.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        <span
+                          className={`fi fi-${country.flag} rounded-full w-5 h-5 mr-2`}
+                        />
+                        {country.code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <CustomInput
+                dir="ltr"
+                type="tel"
+                placeholder="Enter your mobile number"
+                {...register("phone", { required: true })}
+                className="rounded-l-none w-full"
+                style={{
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                }}
+              />
+            </div>
+            {errors.phone && (
+              <span className="text-xs text-red-500">Required</span>
+            )}
+          </div>
+        )}
+        <Button
+          type="submit"
+          className="w-full text-white font-semibold text-sm mt-4 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity py-3 rounded-lg"
+        >
+          Send Reset Password Code
+        </Button>
+        <div className="flex justify-center items-center gap-2 mt-4 text-sm">
+          <span>Back to</span>
+          <a
+            href="/auth/sign-in"
+            className="dark:text-blue-400  hover:underline font-semibold"
+            tabIndex={0}
+          >
+            Sign in
+          </a>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default ForgetPassword;

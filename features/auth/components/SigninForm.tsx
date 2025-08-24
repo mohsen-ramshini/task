@@ -208,7 +208,7 @@ export const SigninForm = () => {
           />
 
           <a
-            href="/forget-password"
+            href="/auth/forget-password"
             className="block text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline text-right"
           >
             Forgot password?
