@@ -3,14 +3,6 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import "flag-icons/css/flag-icons.min.css";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../../src/components/ui/form";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -18,26 +10,9 @@ import {
   SelectValue,
 } from "../../../src/components/ui/select";
 import { Button } from "../../../src/components/ui/button";
-
-// Country selector data
-const countries = [
-  { code: "+1", name: "United States", flag: "us" },
-  { code: "+44", name: "United Kingdom", flag: "gb" },
-  { code: "+98", name: "Iran", flag: "ir" },
-  { code: "+91", name: "India", flag: "in" },
-  { code: "+81", name: "Japan", flag: "jp" },
-  { code: "+49", name: "Germany", flag: "de" },
-  { code: "+33", name: "France", flag: "fr" },
-  { code: "+61", name: "Australia", flag: "au" },
-  { code: "+7", name: "Russia", flag: "ru" },
-  { code: "+86", name: "China", flag: "cn" },
-  { code: "+39", name: "Italy", flag: "it" },
-  { code: "+34", name: "Spain", flag: "es" },
-  { code: "+90", name: "Turkey", flag: "tr" },
-  { code: "+966", name: "Saudi Arabia", flag: "sa" },
-  { code: "+971", name: "UAE", flag: "ae" },
-  // ... add more as needed
-];
+import { countries } from "../../../lib/constants";
+import { useForgetPassword } from "../api/use-forget-password";
+import { toast } from "sonner";
 
 type Country = typeof countries[number];
 
@@ -63,9 +38,25 @@ const ForgetPassword = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const forgetPasswordMutation = useForgetPassword();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (values: any) => {
-    // Handle forget password
+  const onSubmit = async (values: any) => {
+    setIsLoading(true);
+    let data = { ...values };
+    if (tab === "mobile") {
+      data.phone = `${selectedCountry.code} ${values.phone?.replace(/\D/g, "")}`;
+    }
+    await new Promise((res) => setTimeout(res, 2000));
+    forgetPasswordMutation.mutate(data, {
+      onSettled: () => setIsLoading(false),
+      onSuccess: async () => {
+        await new Promise((res) => setTimeout(res, 1200));
+      },
+      onError: async () => {
+        await new Promise((res) => setTimeout(res, 1200));
+      },
+    });
   };
 
   return (
@@ -182,9 +173,14 @@ const ForgetPassword = () => {
         )}
         <Button
           type="submit"
-          className="w-full text-white font-semibold text-sm mt-4 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity py-3 rounded-lg"
+          className="w-full text-white font-semibold text-sm mt-4 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity py-3 rounded-lg flex items-center justify-center"
+          disabled={isLoading}
         >
-          Send Reset Password Code
+          {isLoading ? (
+            <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            "Send Reset Password Code"
+          )}
         </Button>
         <div className="flex justify-center items-center gap-2 mt-4 text-sm">
           <span>Back to</span>

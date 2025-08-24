@@ -22,8 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../src/components/ui/select";
-import {countries} from "../../../lib/constants"
-
+import { countries } from "../../../lib/constants";
+import { useSignIn } from "../api/use-sign-in";
+import { toast } from "sonner";
 
 type Country = typeof countries[number];
 
@@ -45,9 +46,33 @@ export const SigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [tab, setTab] = useState<"email" | "mobile">("email");
   const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]);
+  const loginMutation = useSignIn();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (values: LoginFormValues) => {
-    // Handle form submission
+  const handleSubmit = async (values: LoginFormValues) => {
+    setIsLoading(true);
+    let data = { ...values };
+    if (tab === "mobile") {
+      data.username = `${selectedCountry.code} ${values.username.replace(/\D/g, "")}`;
+    }
+    await new Promise((res) => setTimeout(res, 2000));
+    loginMutation.mutate(data, {
+      onSettled: () => setIsLoading(false),
+      onSuccess: async (result: any) => {
+        // ذخیره توکن‌ها در localStorage
+        if (result?.access_token) {
+          localStorage.setItem('access_token', result.access_token);
+        }
+        if (result?.refresh_token) {
+          localStorage.setItem('refresh_token', result.refresh_token);
+        }
+        await new Promise((res) => setTimeout(res, 1200));
+        window.location.href = '/dashboard';
+      },
+      onError: async () => {
+        await new Promise((res) => setTimeout(res, 1200));
+      }
+    });
   };
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -216,9 +241,14 @@ export const SigninForm = () => {
 
           <Button
             type="submit"
-            className="w-full text-white font-semibold mt-2 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity"
+            className="w-full text-white font-semibold mt-2 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity flex items-center justify-center"
+            disabled={isLoading}
           >
-            Sign In with {tab === "email" ? "Email" : "Phone"}
+            {isLoading ? (
+              <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              `Sign In with ${tab === "email" ? "Email" : "Phone"}`
+            )}
           </Button>
           <div className="flex justify-center items-center gap-2 mt-4 text-sm">
             <span>Don’t have an account yet?</span>
@@ -235,4 +265,3 @@ export const SigninForm = () => {
     </div>
   );
 };
-export default SigninForm;

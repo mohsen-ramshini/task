@@ -19,6 +19,8 @@ import {
   SelectValue,
 } from "../../../src/components/ui/select";
 import { countries } from "../../../lib/constants";
+import { useSignup } from "../api/use-sign-up";
+import { toast } from "sonner";
 
 type Country = typeof countries[number];
 
@@ -42,11 +44,29 @@ const SignupForm = () => {
   const [riskChecked, setRiskChecked] = useState(false);
   const [tncChecked, setTncChecked] = useState(false);
   const [marketingChecked, setMarketingChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const signupMutation = useSignup();
 
-  const onSubmit = (values: any) => {
-    // Handle sign up
+  const onSubmit = async (values: any) => {
+    setIsLoading(true);
+    const data = {
+      ...values,
+      phone: selectedCountry.code + " " + (values.phone || ""),
+    };
+    // مکث ۲ ثانیه‌ای قبل از ارسال
+    await new Promise((res) => setTimeout(res, 2000));
+    signupMutation.mutate(data, {
+      onSettled: () => setIsLoading(false),
+      onSuccess: async () => {
+        await new Promise((res) => setTimeout(res, 1200));
+        window.location.href = '/auth/sign-in';
+      },
+      onError: async () => {
+        await new Promise((res) => setTimeout(res, 1200));
+      }
+    });
   };
 
   return (
@@ -172,9 +192,14 @@ const SignupForm = () => {
         </div>
         <Button
           type="submit"
-          className="w-full text-white font-semibold text-lg mt-4 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity py-3 rounded-lg"
+          className="w-full text-white font-semibold text-lg mt-4 bg-[#569ce9] hover:bg-[#569ce9] hover:opacity-80 transition-opacity py-3 rounded-lg flex items-center justify-center"
+          disabled={isLoading}
         >
-          Create Account
+          {isLoading ? (
+            <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            "Create Account"
+          )}
         </Button>
         <div className="flex justify-center items-center gap-2 mt-4 text-sm">
           <span>Already have an account?</span>
