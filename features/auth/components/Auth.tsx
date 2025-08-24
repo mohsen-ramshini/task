@@ -11,7 +11,7 @@ const Auth: React.FC<PropsWithChildren> = ({ children }) => {
           <div className="flex justify-center items-center p-0 w-full h-full">
             <Avatar className="w-full h-full">
               <AvatarImage
-                src="/logo-light-full.png"
+                src="/assets/image/logo-light-full.png"
                 alt="logo"
                 className="object-contain max-w-[100px] max-h-[40px] sm:max-w-[150px] sm:max-h-[50px]"
                 width={100}

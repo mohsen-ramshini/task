@@ -35,7 +35,7 @@ const CustomInput = React.forwardRef<
   <input
     ref={ref}
     className={
-      `w-full px-3 py-2 rounded-xl bg-[#f5f5f5] dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-transparent transition-all duration-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none ` +
+      `w-full px-3 py-2 rounded-xl bg-[#f5f5f5] dark:bg-[#404040] text-gray-900 dark:text-gray-100 border border-transparent transition-all duration-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none ` +
       className
     }
     {...props}
